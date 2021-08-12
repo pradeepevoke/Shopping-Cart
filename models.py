@@ -1,5 +1,6 @@
 from typing import Text
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Text
+from sqlalchemy.orm import backref, relationship
 from database import Base
 
 class User(Base):
@@ -12,10 +13,14 @@ class User(Base):
     mobile = Column(String)
     address = Column(String)
 
+    # cart = relationship("Cart", back_populates="user")
+
 class Category(Base):
     __tablename__ = "category"
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String)
+
+    # product = relationship("Product", back_populates='category')
 
 class Product(Base):
     __tablename__ = "products"
@@ -27,6 +32,8 @@ class Product(Base):
     description = Column(Text)
     price = Column(Integer)
 
+    category = relationship("Category", backref="products")
+
 class Cart(Base):
     __tablename__ = "cart"
 
@@ -34,3 +41,6 @@ class Cart(Base):
     user_id = Column(Integer, ForeignKey("users.id", ondelete='CASCADE'))
     product_id = Column(Integer, ForeignKey('products.id', ondelete='CASCADE'))
     quantity = Column(Integer)
+
+    user = relationship("User", backref="carts")
+    products = relationship("Product", backref="carts")
