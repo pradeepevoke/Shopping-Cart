@@ -1,4 +1,3 @@
-from models import Product
 from pydantic import BaseModel
 
 class Register(BaseModel):
@@ -23,8 +22,28 @@ class ShowUser(BaseModel):
 class Category(BaseModel):
     name: str
 
+    class Config:
+        orm_mode = True
+
 class Cart(BaseModel):
-    id: int
     user_id: int
     product_id: int
     quantity: int
+
+class Product(BaseModel):
+    name: str
+    image: str
+    description: str
+    price: int
+    category: Category
+
+    class Config:
+        orm_mode = True
+
+class ShowCart(BaseModel):
+    id: int
+    quantity: int
+    products: Product
+
+    class Config:
+        orm_mode = True
