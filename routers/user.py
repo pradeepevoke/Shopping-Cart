@@ -1,41 +1,31 @@
 from typing import List
-from fastapi import APIRouter, Depends, status, HTTPException
+from fastapi import APIRouter, Depends, status
 import sys
 sys.path.append("..")
-import database, schemas, models
+import database, schemas
 from sqlalchemy.orm import Session
-from hashing import Hash
+from repository import user
 
-router = APIRouter()
+router = APIRouter(
+    tags=['Users']
+)
 
-@router.get('/users', response_model=List[schemas.ShowUser], tags=['Users'])
+@router.get('/users', response_model=List[schemas.ShowUser])
 def getUsers(db: Session = Depends(database.get_db)):   
-    users = db.query(models.User).all()
-    return users
+    return user.get_all(db)
 
-@router.post('/user/register', status_code=status.HTTP_201_CREATED, tags=['Users'])
+@router.post('/user/register', status_code=status.HTTP_201_CREATED)
 def register(request: schemas.Register, db: Session = Depends(database.get_db)):
-    data = models.User(firstname=request.firstname, lastname=request.lastname, email=request.email, password=Hash.bcrypt(request.password), mobile=request.mobile, address=request.address)
-    db.add(data)
-    db.commit()
-    db.refresh(data)
-    return data
+    return user.create(request, db)
 
-@router.delete('/user/{id}', status_code=status.HTTP_204_NO_CONTENT, tags=['Users'])
+@router.delete('/user/{id}', status_code=status.HTTP_204_NO_CONTENT)
 def destroy(id, db: Session = Depends(database.get_db)):
-    db.query(models.User).filter(models.User.id == id).delete(synchronize_session=False)
-    db.commit()
-    return {"data":"deleted"}
+    return user.delete(id, db)
 
-@router.put('/user/{id}', status_code=status.HTTP_202_ACCEPTED, tags=['Users'])
+@router.put('/user/{id}', status_code=status.HTTP_202_ACCEPTED)
 def update(id, request: schemas.Register, db: Session = Depends(database.get_db)):
-    db.query(models.User).filter(models.User.id == id).update({"firstname":request.firstname, "lastname":request.lastname, "email":request.email, "mobile":request.mobile, "address":request.address})
-    db.commit()
-    return "Updated Successfully"    
+    return user.update(id, request, db)   
 
-@router.get('/user/{id}', status_code=200, response_model=schemas.ShowUser, tags=['Users'])
+@router.get('/user/{id}', status_code=200, response_model=schemas.ShowUser)
 def getUsers(id, db: Session = Depends(database.get_db)):   
-    user = db.query(models.User).filter(models.User.id == id).first()
-    if not user:
-        raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail=f'User with id {id} not found')
-    return user
+    return user.show(id, db)

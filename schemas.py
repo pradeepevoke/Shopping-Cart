@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import Optional
 
 class Register(BaseModel):
     firstname: str
@@ -47,3 +48,15 @@ class ShowCart(BaseModel):
 
     class Config:
         orm_mode = True
+
+class Login(BaseModel):
+    email: str
+    password: str
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+
+class TokenData(BaseModel):
+    email: Optional[str] = None
