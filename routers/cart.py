@@ -1,3 +1,4 @@
+from routers.oauth2 import get_current_user
 from typing import List
 from fastapi import APIRouter, Depends, status
 import sys
@@ -11,17 +12,17 @@ router = APIRouter(
 )
 
 @router.get('/cart', response_model=List[schemas.ShowCart])
-def getCart(user_id:int, db: Session = Depends(database.get_db)):   
+def getCart(user_id:int, db: Session = Depends(database.get_db), current_user: schemas.ShowUser = Depends(get_current_user)):   
     return cart.get_all(user_id, db)
 
 @router.post('/cart/add', status_code=status.HTTP_201_CREATED)
-def addCart(request: schemas.Cart, db: Session = Depends(database.get_db)):
+def addCart(request: schemas.Cart, db: Session = Depends(database.get_db), current_user: schemas.ShowUser = Depends(get_current_user)):
     return cart.create(request, db)    
 
 @router.delete('/cart/{id}', status_code=status.HTTP_204_NO_CONTENT)
-def destroy(id, db: Session = Depends(database.get_db)):
+def destroy(id, db: Session = Depends(database.get_db), current_user: schemas.ShowUser = Depends(get_current_user)):
     return cart.delete(id, db)
 
 @router.put('/cart/{id}', status_code=status.HTTP_202_ACCEPTED)
-def update(id, request: schemas.Cart, db: Session = Depends(database.get_db)):
+def update(id, request: schemas.Cart, db: Session = Depends(database.get_db), current_user: schemas.ShowUser = Depends(get_current_user)):
     return cart.update(id, request, db)   

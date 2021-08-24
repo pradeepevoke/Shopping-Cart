@@ -8,3 +8,5 @@ python-multipart
 XlsxWriter
 fpdf
 python-jose
+pytest
+requests

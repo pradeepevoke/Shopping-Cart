@@ -1,3 +1,4 @@
+from database import Base
 from pydantic import BaseModel
 from typing import Optional
 
@@ -9,6 +10,19 @@ class Register(BaseModel):
     mobile: str
     address: str
 
+class Roles(BaseModel):
+    name: str
+    description: str
+
+    class Config:
+        orm_mode = True
+
+class UserRole(Roles):
+    pass
+
+    class Config:
+        orm_mode = True
+
 class ShowUser(BaseModel):
     id : int
     firstname: str
@@ -16,6 +30,7 @@ class ShowUser(BaseModel):
     email: str
     mobile: str
     address: str
+    user_role: UserRole
 
     class Config:
         orm_mode = True
@@ -60,3 +75,4 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     email: Optional[str] = None
+

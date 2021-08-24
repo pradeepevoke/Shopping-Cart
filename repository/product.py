@@ -2,7 +2,7 @@ from fastapi import status, HTTPException, Response
 from sqlalchemy.orm.session import Session
 import sys
 sys.path.append("..")
-import schemas, models
+import models
 
 from io import BytesIO
 import xlsxwriter

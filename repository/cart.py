@@ -8,6 +8,8 @@ def get_all(id, db: Session):
     return db.query(models.Cart).filter(models.Cart.user_id == id).all()
 
 def create(request: schemas.Cart, db: Session):
+    if request.quantity < 1:
+        raise HTTPException(status_code = status.HTTP_400_BAD_REQUEST , detail='Quantity should not be zero')
     data = models.Cart(user_id=request.user_id, product_id=request.product_id, quantity=request.quantity)
     db.add(data)
     db.commit()
@@ -23,6 +25,8 @@ def delete(id, db: Session):
     return {"data":"deleted"}
 
 def update(id, request: schemas.Cart, db: Session):
+    if request.quantity < 1:
+        raise HTTPException(status_code = status.HTTP_400_BAD_REQUEST , detail='Quantity should not be zero')
     db.query(models.Cart).filter(models.Cart.id == id).update({"user_id":request.user_id, "product_id":request.product_id, "quantity":request.quantity})
     db.commit()
     return "Updated Successfully" 
