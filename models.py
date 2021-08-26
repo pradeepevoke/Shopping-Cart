@@ -3,19 +3,6 @@ from sqlalchemy import Column, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import relationship
 from database import Base
 
-class User(Base):
-    __tablename__ = "users"
-    id = Column(Integer, primary_key=True, index=True)
-    firstname = Column(String)
-    lastname = Column(String)
-    password = Column(String)
-    email = Column(String)
-    mobile = Column(String)
-    address = Column(String)
-    
-    # user_role = relationship("UserRole", back_populates="user", uselist=False)
-    # cart = relationship("Cart", back_populates="user")
-
 class Role(Base):
     __tablename__ = "roles"
 
@@ -23,17 +10,23 @@ class Role(Base):
     name = Column(String(100), index=True)
     description = Column(Text)
 
-class UserRole(Base):
-    __tablename__ = "user_roles"
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id", ondelete='CASCADE'))
-    role_id = Column(Integer, ForeignKey("roles.id", ondelete='CASCADE'))
+class User(Base):
+    __tablename__ = "users"
 
-    user_role = relationship("User", backref="user")
-    role = relationship("Role", backref="user_roles")
+    id = Column(Integer, primary_key=True, index=True)
+    firstname = Column(String)
+    lastname = Column(String)
+    password = Column(String)
+    email = Column(String)
+    mobile = Column(String)
+    address = Column(String)
+    role_id = Column(Integer, ForeignKey("roles.id"))
+
+    user_role = relationship("Role", backref="user")
 
 class Category(Base):
     __tablename__ = "category"
+    
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String)
 

@@ -1,14 +1,7 @@
-from database import Base
+from models import Role
+from typing import List
 from pydantic import BaseModel
 from typing import Optional
-
-class Register(BaseModel):
-    firstname: str
-    lastname: str
-    password: str
-    email: str
-    mobile: str
-    address: str
 
 class Roles(BaseModel):
     name: str
@@ -16,24 +9,24 @@ class Roles(BaseModel):
 
     class Config:
         orm_mode = True
-
-class UserRole(Roles):
-    pass
-
-    class Config:
-        orm_mode = True
-
-class ShowUser(BaseModel):
-    id : int
+        
+class User(BaseModel):
     firstname: str
     lastname: str
     email: str
     mobile: str
     address: str
-    user_role: UserRole
+
+class ShowUser(User):
+    id : int
+    user_role: Roles
 
     class Config:
         orm_mode = True
+
+class Register(User):
+    role_id: int
+    password: str
 
 class Category(BaseModel):
     name: str
@@ -75,4 +68,6 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     email: Optional[str] = None
+    scopes: List[str] = []
+
 

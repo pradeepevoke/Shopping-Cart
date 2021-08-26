@@ -9,7 +9,7 @@ def get_all(db: Session):
     return db.query(models.User).all()
 
 def create(request: schemas.Register, db: Session):
-    data = models.User(firstname=request.firstname, lastname=request.lastname, email=request.email, password=Hash.bcrypt(request.password), mobile=request.mobile, address=request.address)
+    data = models.User(firstname=request.firstname, lastname=request.lastname, email=request.email, password=Hash.bcrypt(request.password), mobile=request.mobile, address=request.address, role_id=request.role_id)
     db.add(data)
     db.commit()
     db.refresh(data)
