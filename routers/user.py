@@ -28,7 +28,7 @@ def destroy(id, db: Session = Depends(database.get_db), current_user: schemas.Sh
     return user.delete(id, db)
 
 @router.put('/user/{id}', status_code=status.HTTP_202_ACCEPTED)
-def update(id, request: schemas.Register, db: Session = Depends(database.get_db), current_user: schemas.ShowUser = Depends(get_current_user)):
+def update(id, request: schemas.User, db: Session = Depends(database.get_db), current_user: schemas.ShowUser = Depends(get_current_user)):
     return user.update(id, request, db)   
 
 @router.get('/user/{id}', status_code=200, response_model=schemas.ShowUser)
