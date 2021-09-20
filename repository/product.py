@@ -1,3 +1,4 @@
+from sqlalchemy.sql.functions import mode
 from fastapi import status, HTTPException, Response
 from sqlalchemy.orm.session import Session
 import sys
@@ -10,7 +11,10 @@ import fpdf
 from starlette.responses import StreamingResponse
 
 
-def get_all(db: Session):
+def get_all(category_id, db: Session):
+    return db.query(models.Product).filter(models.Product.category_id == category_id).all()
+
+def get_all_products(db: Session):
     return db.query(models.Product).all()
 
 def create(name, category_id, description, price, image, db: Session):
@@ -21,7 +25,7 @@ def create(name, category_id, description, price, image, db: Session):
         file_base, extension = os.path.splitext(image.filename)
         now = datetime.now()
         dt_string = now.strftime("%d%m%Y%H%M%S")
-        file_path = os.getcwd()+"/images/"+file_base.replace(" ", "-")+"-"+dt_string+extension
+        file_path = "./static/images/"+file_base.replace(" ", "-")+"-"+dt_string+extension
         with open(file_path,'wb+') as f:
             f.write(image.file.read())
             f.close()
@@ -30,7 +34,7 @@ def create(name, category_id, description, price, image, db: Session):
     db.add(data)
     db.commit()
     db.refresh(data)
-    return data
+    return {"detail": "Product added successfully"}
 
 def delete(id, db: Session):
     product = db.query(models.Product).filter(models.Product.id == id)
@@ -47,12 +51,14 @@ def update(id, name, category_id, description, price, image, db: Session):
         file_base, extension = os.path.splitext(image.filename)
         now = datetime.now()
         dt_string = now.strftime("%d%m%Y%H%M%S")
-        file_path = os.getcwd()+"/images/"+file_base.replace(" ", "-")+"-"+dt_string+extension
+        file_path = "./static/images/"+file_base.replace(" ", "-")+"-"+dt_string+extension
         with open(file_path,'wb+') as f:
             f.write(image.file.read())
             f.close()
-            
-    db.query(models.Product).filter(models.Product.id == id).update({"name":name, "category_id":category_id, "image":file_path, "description":description, "price":price})
+
+        db.query(models.Product).filter(models.Product.id == id).update({"image":file_path})
+    
+    db.query(models.Product).filter(models.Product.id == id).update({"name":name, "category_id":category_id, "description":description, "price":price})
     db.commit()
     return "Updated Successfully"    
 

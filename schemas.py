@@ -29,8 +29,10 @@ class Register(User):
     password: str
 
 class Category(BaseModel):
+    id: int
     name: str
-
+    description: str
+    
     class Config:
         orm_mode = True
 
@@ -40,6 +42,7 @@ class Cart(BaseModel):
     quantity: int
 
 class Product(BaseModel):
+    id: int
     name: str
     image: str
     description: str

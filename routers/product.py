@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, status, File, UploadFile
 import sys
-from typing import List
+from typing import List, Optional
 sys.path.append("..")
 import database, schemas
 from sqlalchemy.orm import Session
@@ -12,8 +12,12 @@ router = APIRouter(
 )
 
 @router.get('/products', response_model=List[schemas.Product])
+def getProducts(category_id, db: Session = Depends(database.get_db), current_user: schemas.ShowUser = Depends(get_current_user)):   
+    return product.get_all(category_id, db)
+
+@router.get('/all_products', response_model=List[schemas.Product])
 def getProducts(db: Session = Depends(database.get_db), current_user: schemas.ShowUser = Depends(get_current_user)):   
-    return product.get_all(db)
+    return product.get_all_products(db)
 
 @router.post('/product/add', status_code=status.HTTP_201_CREATED)
 def create_product(name: str = File(...), category_id: int = File(...), description: str = File(...), price: int = File(...), image: UploadFile = File(...), db: Session = Depends(database.get_db), current_user: schemas.ShowUser = Depends(get_current_user)):
@@ -24,7 +28,7 @@ def destroy(id, db: Session = Depends(database.get_db), current_user: schemas.Sh
     return product.delete(id, db)
 
 @router.put('/product/{id}', status_code=status.HTTP_202_ACCEPTED)
-def update(id, name: str = File(...), category_id: int = File(...), description: str = File(...), price: int = File(...), image: UploadFile = File(...), db: Session = Depends(database.get_db), current_user: schemas.ShowUser = Depends(get_current_user)):
+def update(id, name: str = File(...), category_id: int = File(...), description: str = File(...), price: int = File(...), image: UploadFile = File(None), db: Session = Depends(database.get_db), current_user: schemas.ShowUser = Depends(get_current_user)):
     return product.update(id, name, category_id, description, price, image, db)
 
 @router.get('/product/{id}', status_code=200, response_model=schemas.Product)

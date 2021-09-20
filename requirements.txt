@@ -10,3 +10,4 @@ fpdf
 python-jose
 pytest
 requests
+aiofiles

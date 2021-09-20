@@ -29,8 +29,8 @@ class Category(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String)
-
-    # product = relationship("Product", back_populates='category')
+    description = Column(String)
+    
 
 class Product(Base):
     __tablename__ = "products"

@@ -16,7 +16,10 @@ def getCategories(db: Session = Depends(database.get_db), current_user: schemas.
 
 @router.post('/category/add', status_code=status.HTTP_201_CREATED)
 def create_category(request: schemas.Category, db: Session = Depends(database.get_db), current_user: schemas.ShowUser = Depends(get_current_user)):
-    return category.create(request, db)
+    if not category.showCategoryByName(request.name, db):
+        return category.create(request, db)
+    else:
+        raise HTTPException(status_code = status.HTTP_409_CONFLICT , detail=f'Category with name {request.name} already existed')
 
 @router.delete('/category/{id}', status_code=status.HTTP_204_NO_CONTENT)
 def destroy(id, db: Session = Depends(database.get_db), current_user: schemas.ShowUser = Depends(get_current_user)):

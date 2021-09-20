@@ -10,7 +10,7 @@ def test_product():
     response = client.get("/products")
     assert response.status_code == 401
 
-    response = client.get("/products", headers={"Authorization": "Bearer "+jwt_token.json()['access_token']})
+    response = client.get(f"/products?category_id={base.category_id}", headers={"Authorization": "Bearer "+jwt_token.json()['access_token']})
     assert response.status_code == 200
 
 def test_create_product():

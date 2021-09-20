@@ -18,6 +18,10 @@ def getUsers(db: Session = Depends(database.get_db), current_user: models.User =
     except Exception as e:
         return e
 
+@router.get('/currentuser', response_model=schemas.ShowUser)
+def getCurrentUser(db: Session = Depends(database.get_db), current_user: schemas.ShowUser = Depends(get_current_user)):
+    return user.getByEmail(current_user.email,db)
+
 @router.post('/user/register', status_code=status.HTTP_201_CREATED)
 def register(request: schemas.Register, db: Session = Depends(database.get_db)):
     if role.show(request.role_id, db):
@@ -34,3 +38,7 @@ def update(id, request: schemas.User, db: Session = Depends(database.get_db), cu
 @router.get('/user/{id}', status_code=200, response_model=schemas.ShowUser)
 def getUsers(id, db: Session = Depends(database.get_db), current_user: schemas.ShowUser = Depends(get_current_user)):   
     return user.show(id, db)
+
+@router.get('/user', status_code=200, response_model=schemas.ShowUser)
+def getUserByMail(email: str, db: Session = Depends(database.get_db), current_user: schemas.ShowUser = Depends(get_current_user)):   
+    return user.getByEmail(email, db)

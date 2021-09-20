@@ -22,7 +22,8 @@ def test_create_category():
     assert response.status_code == 422
 
     data = {
-        "name": "furniture"
+        "name": "furniture", 
+        "description" : "For testing"
     }
 
     response = client.post("/category/add", data=json.dumps(data), headers = {"Authorization": "Bearer "+ jwt_token.json()['access_token']})
@@ -44,7 +45,8 @@ def test_show_category():
 def test_update_category():
     
     data = {
-        "name": "mobiles"
+        "name": "mobiles",
+        "description" : "For testing"
     }
 
     response = client.put(f"/category/{base.category_id}", data=json.dumps(data))
